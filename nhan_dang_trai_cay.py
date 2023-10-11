@@ -1,17 +1,17 @@
 import streamlit as st
 import numpy as np
-from PIL import Image
 import cv2
-st.title('Nhận dạng trái cây')
+from PIL import Image
 
+st.title('Nhận dạng trái cây')
 try:
     if st.session_state["LoadModel"] == True:
-        print('Đã load model rồi')
+        print('Đã load')
 except:
     st.session_state["LoadModel"] = True
     st.session_state["Net"] = cv2.dnn.readNet("trai_cay.onnx")
-    print(st.session_state["LoadModel"])
-    print('Load model lần đầu') 
+    print('Load lần đầu')
+
 
 # Constants.
 INPUT_WIDTH = 640
@@ -99,12 +99,12 @@ def post_process(input_image, outputs):
         draw_label(input_image, label, left, top)
     return input_image
 
-img_file_buffer = st.file_uploader("Upload an image", type=["bmp", "png", "jpg", "jpeg"])
 
-if img_file_buffer is not None:
-    image = Image.open(img_file_buffer)
-    # Chuyển sang cv2 để dùng sau này
-    frame = np.array(image)
+          
+file_name = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
+if file_name is not None:
+    image = Image.open(file_name)
+    frame = np.array(image) # if you want to pass it to OpenCV
     st.image(image, caption="The caption", use_column_width=True)
     if st.button('Predict'):
         classes = ['Buoi', 'Cam', 'Coc', 'Khe', 'Mit']
@@ -120,5 +120,3 @@ if img_file_buffer is not None:
         print(label)
         cv2.putText(img, label, (20, 40), FONT_FACE, FONT_SCALE,  (0, 0, 255), THICKNESS, cv2.LINE_AA)
         st.image(img, caption="The caption", use_column_width=True)
-
-
